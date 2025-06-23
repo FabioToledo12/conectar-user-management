@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/auth';
 import { LoginCredentials } from '../types';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { FcGoogle } from 'react-icons/fc';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -61,6 +62,16 @@ const Login: React.FC = () => {
               },
             })}
           />
+
+          <div className="flex flex-col items-center space-y-4">
+            <button
+              type="button"
+              onClick={() => window.location.href = '/auth/google'}
+              className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors text-gray-700 font-medium text-base"
+            >
+              <FcGoogle className="w-6 h-6 mr-2" /> Entrar com Google
+            </button>
+          </div>
 
           <Button
             type="submit"

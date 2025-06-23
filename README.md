@@ -65,7 +65,7 @@ Uma aplicação full-stack completa para gerenciamento de usuários, desenvolvid
 
 ### 1. Clone o repositório
 ```bash
-git clone <repository-url>
+git clone https://github.com/FabioToledo12/conectar-user-management
 cd conectar-user-management
 ```
 
@@ -207,7 +207,7 @@ npm run build
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT. Veja o arquivo.
 
 ## 📞 Contato
 

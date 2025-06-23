@@ -174,3 +174,27 @@ A autenticação JWT protege todas as rotas sensíveis. Guards e decorators cont
 
 ### Arquitetura Modular
 O backend é dividido em módulos (auth, users, common), facilitando manutenção e testes.
+
+## Autenticação com Google OAuth2
+
+### 1. Criar credenciais no Google Cloud
+1. Acesse https://console.cloud.google.com/
+2. Crie um novo projeto (ou selecione um existente).
+3. Vá em "APIs e Serviços" > "Credenciais".
+4. Clique em "Criar credenciais" > "ID do cliente OAuth".
+5. Escolha "Aplicativo da Web" e defina os URIs de redirecionamento:
+   - Exemplo local: `http://localhost:3000/auth/google/callback`
+6. Salve o `Client ID` e o `Client Secret`.
+
+### 2. Configurar variáveis de ambiente
+No arquivo `.env` do backend, adicione:
+
+```
+GOOGLE_CLIENT_ID=seu_client_id
+GOOGLE_CLIENT_SECRET=seu_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+```
+
+### 3. Rotas disponíveis
+- `GET /auth/google` — Inicia o login com Google
+- `GET /auth/google/callback` — Callback do Google (configurar como URI de redirecionamento)

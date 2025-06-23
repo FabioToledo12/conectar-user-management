@@ -89,4 +89,39 @@ export class AuthService {
       },
     };
   }
+
+  async loginWithGoogle(googleUser: { email: string; name: string; picture?: string; googleId: string }) {
+    let user = await this.usersService.findByEmail(googleUser.email);
+    if (!user) {
+      // Cria usuário sem senha, papel padrão USER
+      user = await this.usersService.create({
+        name: googleUser.name,
+        email: googleUser.email,
+        password: googleUser.googleId, // senha fake, nunca será usada
+        role: undefined,
+      });
+    } else if (!user.isActive) {
+      throw new UnauthorizedException('Usuário inativo');
+    }
+    await this.usersService.updateLastLogin(user.id);
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+      name: user.name,
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
+  }
 }
