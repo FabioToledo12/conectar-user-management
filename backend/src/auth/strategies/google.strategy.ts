@@ -23,7 +23,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const { name, emails, photos } = profile;
     const user = {
       email: emails[0].value,
-      name: name.givenName + ' ' + name.familyName,
+      name: [name?.givenName, name?.familyName].filter(Boolean).join(' '),
       picture: photos[0].value,
       provider: 'google',
       googleId: profile.id,

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, Req, UseGuards, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -71,8 +71,9 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    // Gera JWT e retorna dados do usuário Google
-    return this.authService.loginWithGoogle(req.user);
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const result = await this.authService.loginWithGoogle(req.user);
+    // Redireciona para o frontend na rota /profile com o token JWT
+    return res.redirect(`http://localhost:5173/profile?token=${result.access_token}`);
   }
 }

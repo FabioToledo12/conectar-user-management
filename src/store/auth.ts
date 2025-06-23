@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, LoginCredentials, RegisterData } from '../types';
 import { authApi } from '../services/api';
+import { usersApi } from '../services/api';
 
 interface AuthState {
   user: User | null;
@@ -12,6 +13,7 @@ interface AuthState {
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
+  loginWithToken: (token: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -68,6 +70,29 @@ export const useAuthStore = create<AuthState>()(
 
       setUser: (user: User) => {
         set({ user });
+      },
+
+      loginWithToken: async (token: string) => {
+        localStorage.setItem('token', token);
+        set({ isLoading: true });
+        try {
+          const profile = await usersApi.getProfile();
+          set({
+            user: profile,
+            token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          localStorage.removeItem('token');
+          throw error;
+        }
       },
     }),
     {

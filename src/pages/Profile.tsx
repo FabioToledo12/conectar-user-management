@@ -8,12 +8,15 @@ import { UpdateProfileData } from '../types';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, loginWithToken } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<UpdateProfileData & { confirmPassword?: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -23,11 +26,28 @@ const Profile: React.FC = () => {
     }
   }, [user, reset]);
 
+  // Captura token da URL e faz login automático
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      loginWithToken(token)
+        .then(() => {
+          navigate('/profile', { replace: true });
+        })
+        .catch(() => {
+          toast.error('Erro ao autenticar com Google');
+          navigate('/login');
+        });
+    }
+    // eslint-disable-next-line
+  }, []);
+
   const onSubmit = async (data: UpdateProfileData & { confirmPassword?: string }) => {
     setLoading(true);
     try {
       const updateData: UpdateProfileData = { name: data.name };
-      
+
       if (data.password) {
         updateData.password = data.password;
       }
@@ -80,11 +100,10 @@ const Profile: React.FC = () => {
             <div className="ml-6 text-white">
               <h2 className="text-2xl font-bold">{user.name}</h2>
               <p className="text-blue-100">{user.email}</p>
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-2 ${
-                user.role === 'admin' 
-                  ? 'bg-yellow-400 text-yellow-900' 
-                  : 'bg-blue-200 text-blue-900'
-              }`}>
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-2 ${user.role === 'admin'
+                ? 'bg-yellow-400 text-yellow-900'
+                : 'bg-blue-200 text-blue-900'
+                }`}>
                 {user.role === 'admin' ? 'Administrador' : 'Usuário'}
               </span>
             </div>
@@ -112,11 +131,10 @@ const Profile: React.FC = () => {
                 <div>
                   <label className="text-sm font-medium text-gray-500">Status</label>
                   <p className="mt-1">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                      user.isActive 
-                        ? 'bg-green-100 text-green-600' 
-                        : 'bg-red-100 text-red-600'
-                    }`}>
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${user.isActive
+                      ? 'bg-green-100 text-green-600'
+                      : 'bg-red-100 text-red-600'
+                      }`}>
                       {user.isActive ? 'Ativo' : 'Inativo'}
                     </span>
                   </p>
@@ -133,7 +151,12 @@ const Profile: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end space-x-3">
+                <Link to="/set-password">
+                  <Button type="button" variant="secondary">
+                    Definir/Alterar Senha
+                  </Button>
+                </Link>
                 <Button
                   onClick={() => setEditing(true)}
                   icon={<Edit className="w-4 h-4" />}

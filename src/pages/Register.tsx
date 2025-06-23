@@ -20,7 +20,7 @@ const Register: React.FC = () => {
       const { confirmPassword, ...registerData } = data;
       await registerUser(registerData);
       toast.success('Conta criada com sucesso!');
-      navigate('/dashboard');
+      navigate('/profile');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Erro ao criar conta');
     }

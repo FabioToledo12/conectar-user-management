@@ -18,7 +18,7 @@ const Login: React.FC = () => {
     try {
       await login(data);
       toast.success('Login realizado com sucesso!');
-      navigate('/dashboard');
+      navigate('/profile');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Erro ao fazer login');
     }
@@ -66,7 +66,7 @@ const Login: React.FC = () => {
           <div className="flex flex-col items-center space-y-4">
             <button
               type="button"
-              onClick={() => window.location.href = '/auth/google'}
+              onClick={() => window.location.href = 'http://localhost:3001/auth/google'}
               className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors text-gray-700 font-medium text-base"
             >
               <FcGoogle className="w-6 h-6 mr-2" /> Entrar com Google
